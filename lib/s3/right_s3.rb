@@ -777,7 +777,14 @@ module RightAws
       
         # Return Grantee type (+String+): "Group" or "CanonicalUser".
       def type
-        @id[/^http:/] ? "Group" : "CanonicalUser"
+        case @id
+        when /^http:/
+          "Group"
+        when /@/
+          "AmazonCustomerByEmail"
+        else
+          "CanonicalUser"
+        end
       end
  
         # Return a name or an id.
@@ -872,7 +879,14 @@ module RightAws
       end
 
       def to_xml   # :nodoc:
-        id_str = @id[/^http/] ? "<URI>#{@id}</URI>" : "<ID>#{@id}</ID>"
+        id_str = case @id
+                 when /^http/
+                   "<URI>#{@id}</URI>"
+                 when /@/
+                   "<EmailAddress>#{@id}</EmailAddress>"
+                 else
+                   "<ID>#{@id}</ID>"
+                 end
         grants = ''
         @perms.each do |perm|
           grants << "<Grant>"    +
