@@ -872,7 +872,14 @@ module RightAws
       end
 
       def to_xml   # :nodoc:
-        id_str = @id[/^http/] ? "<URI>#{@id}</URI>" : "<ID>#{@id}</ID>"
+        id_str = case @id
+                 when /^http/
+                   "<URI>#{@id}</URI>"
+                 when /@/
+                   "<EmailAddress>#{@id}</EmailAddress>"
+                 else
+                   "<ID>#{@id}</ID>"
+                 end
         grants = ''
         @perms.each do |perm|
           grants << "<Grant>"    +
