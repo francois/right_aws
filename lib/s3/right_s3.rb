@@ -777,7 +777,14 @@ module RightAws
       
         # Return Grantee type (+String+): "Group" or "CanonicalUser".
       def type
-        @id[/^http:/] ? "Group" : "CanonicalUser"
+        case @id
+        when /^http:/
+          "Group"
+        when /@/
+          "AmazonCustomerByEmail"
+        else
+          "CanonicalUser"
+        end
       end
  
         # Return a name or an id.
